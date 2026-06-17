@@ -1,5 +1,9 @@
+import subprocess
+from subprocess import CompletedProcess
+
+
 class Scanner:
-    def __init__(self, network_address: str):
+    def __init__(self, network_address: str) -> None:
         self.network_address = network_address
 
     def get_network_prefix(self) -> str:
@@ -11,14 +15,24 @@ class Scanner:
 
         return ".".join(result)
 
-    def scan(self):
+    def scan(self) -> None:
         address = self.get_network_prefix()
         for i in range(0, 255):
             self.check_host(f"{address}.{i}")
 
     def check_host(self, ip_address: str):
-        print(ip_address)
+        result: CompletedProcess[bytes] = subprocess.run(
+            ["ping", "-c", "1", ip_address]
+        )
+        print(result)
 
+    def something(self):
+        result: CompletedProcess[bytes] = subprocess.run(
+            ["ping", "-c", "1", "192.168.1.1"], capture_output=True
+        )
+
+        if result.returncode == 0: 
+            print(result.stdout)
 
 if __name__ == "__main__":
     scanner = Scanner(network_address="192.168.1.0")
